@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const authRoute = require("../work.ua_backend/routes/auth");
+
 
 dotenv.config();
 
@@ -12,10 +14,9 @@ mongoose
   .then(() => console.log("Database connected"))
   .catch((err) => console.log(`Error connecting database: ${err}`));
 
-app.get("/", (req, res) => {
-  res.send("A simple Node App is " + "running on this server");
-  res.end();
-});
+app.use(express.json());
+app.use("/api/", authRoute);
+
 
 const PORT = process.env.PORT || 5000;
 

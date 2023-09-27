@@ -7,4 +7,4 @@ const CVSchema = new mongoose.Schema({
   description: { type: String, required: true, unique: false },
 });
 
-module.exports("CV, CVSchema");
+module.exports("CV", CVSchema);

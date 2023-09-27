@@ -10,4 +10,4 @@ const VacancySchema = new mongoose.Schema({
   description: { type: String, required: true, unique: false },
 });
 
-module.exports = mongoose.model("Vacancy, VacancySchema");
+module.exports = mongoose.model("Vacancy", VacancySchema);

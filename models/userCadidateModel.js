@@ -20,4 +20,4 @@ const UserCandidateSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("UserCandidate, UserCandidateSchema");
+module.exports = mongoose.model("UserCandidate", UserCandidateSchema);
