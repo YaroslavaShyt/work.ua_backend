@@ -34,7 +34,7 @@ module.exports = {
             req.body.password,
             process.env.SECRET_WORD
           ).toString(),
-          prifilePhoto: req.body.prifilePhoto,
+          profilePhoto: req.body.profilePhoto,
         }));
     try {
       const savedUser = await newUser.save();
@@ -46,11 +46,16 @@ module.exports = {
 
   loginUser: async (req, res) => {
     try {
-      req.body.usertype == "candidate"
-        ? (user = await UserCandidate.findOne({ email: req.body.email }))
-        : (user = await UserCompany.findOne({ email: req.body.email }));
+      let user;
+      if (req.body.usertype == "candidate") {
+        user = await UserCandidate.findOne({ email: req.body.email });
+      } else {
+        user = await UserCompany.findOne({ email: req.body.email });
+      }
 
-      !user && res.status(401).json("User not found");
+      if (!user) {
+        return res.status(401).json("User not found");
+      }
 
       const password = CryptoJS.AES.decrypt(
         user.password,
@@ -58,14 +63,16 @@ module.exports = {
       );
       const depassword = password.toString(CryptoJS.enc.Utf8);
 
-      depassword !== req.body.password &&
-        res.status(401).json("Wrong password");
+      if (depassword !== req.body.password) {
+        console.log(
+          `body: ${req.body.password}, depass: ${depassword}, password: ${password}`
+        );
+        return res.status(401).json("Wrong password");
+      }
 
-      res.status(200).json(user); // {success: true, statuscode: res.status(201)}
+      res.status(200).json(user);
     } catch (error) {
-      res.status(500).json(error); // {success: false, statuscode: res.status(500)}
+      res.status(500).json(error);
     }
   },
-
-  
 };
