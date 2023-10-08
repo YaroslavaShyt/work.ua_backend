@@ -20,11 +20,20 @@ module.exports = {
         { new: true }
       );
       console.log(UpdateUser);
-      const { password, __v, createdAt, ...others } = this.UpdateUser._doc;
+      // const { password, __v, createdAt, ...others } = this.UpdateUser._doc;
 
-      res.status(200).json({ ...others });
+      res.status(200).json({ UpdateUser }); // ...others });
     } catch {
       res.status(500).json("Some error occured");
+    }
+  },
+
+  deleteUserCandidate: async (req, res) => {
+    try {
+      await UserCandidate.findByIdAndDelete(req.params.id);
+      req.status(200).json({ success: true });
+    } catch (error) {
+      res.status(404).json({ success: false, error: error });
     }
   },
 };

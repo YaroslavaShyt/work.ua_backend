@@ -1,6 +1,7 @@
 const UserCandidate = require("../models/userCadidateModel");
 const UserCompany = require("../models/userCompanyModel");
 const CryptoJS = require("crypto-js");
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   createUser: async (req, res) => {
@@ -57,20 +58,28 @@ module.exports = {
         return res.status(401).json("User not found");
       }
 
-      const password = CryptoJS.AES.decrypt(
+      const decrpassword = CryptoJS.AES.decrypt(
         user.password,
         process.env.SECRET_WORD
       );
-      const depassword = password.toString(CryptoJS.enc.Utf8);
+      const depassword = decrpassword.toString(CryptoJS.enc.Utf8);
 
       if (depassword !== req.body.password) {
-        console.log(
-          `body: ${req.body.password}, depass: ${depassword}, password: ${password}`
-        );
         return res.status(401).json("Wrong password");
       }
 
-      res.status(200).json(user);
+      const { password, __v, createdAt, ...others } = user._doc;
+
+      const userToken = jwt.sign(
+        {
+          id: user._id,
+          isCompany: user.isCompany,
+        },
+        process.env.JWT_SEC,
+        { expiresIn: "21d" }
+      );
+
+      res.status(200).json({...others, userToken});
     } catch (error) {
       res.status(500).json(error);
     }

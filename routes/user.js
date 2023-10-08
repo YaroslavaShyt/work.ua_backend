@@ -7,6 +7,10 @@ const {
 
 router.put("/:id", verifyAndAuthorization, userController.updateUserCandidate);
 
-//router.post("/login_candidate", authController.loginUser);
+router.delete(
+  "/:id",
+  verifyAndAuthorization,
+  userController.deleteUserCandidate
+);
 
 module.exports = router;

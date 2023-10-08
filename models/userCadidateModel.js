@@ -10,7 +10,6 @@ const UserCandidateSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   socialMediaLinks: { type: Array, required: false, unique: true },
   password: { type: String, required: true, unique: false },
-  isAdmin: { type: Boolean, default: false },
   profilePhoto: {
     type: String,
     required: true,
