@@ -13,4 +13,12 @@ router.delete(
   userController.deleteUserCandidate
 );
 
+router.get("/:id", verifyAndAuthorization, userController.getUserCandidate);
+
+router.get(
+  "/allUsers",
+  verifyAndAuthorization,
+  userController.getAllUsersCandidate
+);
+
 module.exports = router;

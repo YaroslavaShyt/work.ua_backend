@@ -36,4 +36,23 @@ module.exports = {
       res.status(404).json({ success: false, error: error });
     }
   },
+
+  getUserCandidate: async (req, res) => {
+    try {
+      const user = await UserCandidate.findById(req.params.id);
+      const { password, __v, createdAt, updatedAt, ...userData } = user._doc;
+      res.status(200).json(userData);
+    } catch (error) {
+      res.status(404).json({ success: false, error: error });
+    }
+  },
+
+  getAllUsersCandidate: async (req, res) => {
+    try {
+      const users = await UserCandidate.find();
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(404).json({ success: false, error: error });
+    }
+  },
 };
