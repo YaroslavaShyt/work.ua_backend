@@ -48,11 +48,13 @@ module.exports = {
   },
 
   getAllUsersCandidate: async (req, res) => {
-    try {
-      const users = await UserCandidate.find();
-      res.status(200).json(users);
-    } catch (error) {
-      res.status(404).json({ success: false, error: error });
-    }
+    // try {
+    console.log("in function");
+    const users = await UserCandidate.find();
+    console.log(users);
+    res.status(200).json(users);
+    // } catch (error) {
+    //  res.status(404).json({ success: false, error: error });
+    // }
   },
 };

@@ -11,6 +11,7 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_SEC, async (err, user) => {
       if (err) {
+        console.log('in jwt');
         res.status(403).json(err);
       }
       req.user = user;
