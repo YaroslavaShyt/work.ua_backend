@@ -11,7 +11,7 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_SEC, async (err, user) => {
       if (err) {
-        console.log('in jwt');
+        console.log("in jwt");
         res.status(403).json(err);
       }
       req.user = user;
@@ -24,6 +24,7 @@ const verifyToken = (req, res, next) => {
 
 const verifyAndAuthorization = (req, res, next) => {
   verifyToken(req, res, () => {
+    console.log(`${req.user.id} - ${req.params.id}`);
     if (req.user.id === req.params.id) {
       next();
     } else {

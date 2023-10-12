@@ -16,7 +16,7 @@ router.delete(
 router.get("/:id", verifyAndAuthorization, userController.getUserCandidate);
 
 router.get(
-  "/allUsers",
+  "/allUsers/:id",
   verifyAndAuthorization,
   userController.getAllUsersCandidate
 );
