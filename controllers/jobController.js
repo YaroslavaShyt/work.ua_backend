@@ -47,7 +47,7 @@ module.exports = {
       res.status(404).json({ success: false, error: error });
     }
   },
-
+// does not work
   getAllJobs: async (req, res) => {
     // try {
     const jobs = await Job.find();
