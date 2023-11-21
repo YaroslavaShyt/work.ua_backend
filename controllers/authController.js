@@ -1,5 +1,6 @@
 const UserCandidate = require("../models/userCadidateModel");
 const UserCompany = require("../models/userCompanyModel");
+const Token = require("../models/tokenModel");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 
@@ -14,12 +15,15 @@ module.exports = {
           city: req.body.city,
           contactNumber: req.body.contactNumber,
           email: req.body.email,
+          // remove links
           socialMediaLinks: req.body.socialMediaLinks,
           password: CryptoJS.AES.encrypt(
             req.body.password,
             process.env.SECRET_WORD
           ).toString(),
+          // remove is admin
           isAdmin: req.body.isAdmin,
+          // remove here, add in update
           profilePhoto: req.body.profilePhoto,
         }))
       : (newUser = new UserCompany({
@@ -38,24 +42,59 @@ module.exports = {
           profilePhoto: req.body.profilePhoto,
         }));
     try {
+      //console.log(request);
+      //console.log("an attempt made");
+
       const savedUser = await newUser.save();
-      res.status(201).json(savedUser); // {success: true, statuscode: res.status(201)}
+
+      const userToken = jwt.sign(
+        {
+          id: savedUser._id,
+          password: savedUser.password,
+        },
+        process.env.JWT_SEC,
+        { expiresIn: "50d" }
+      );
+
+      const tokenValue = await new Token({
+        userId: savedUser._id,
+        value: userToken,
+      }).save();
+
+      console.log(`token ${tokenValue}`);
+      const responseData = {
+        success: true,
+        statuscode: 201,
+        data: { token: tokenValue.value },
+      };
+      console.log("here1");
+      res.status(201).json(responseData); // {success: true, statuscode: res.status(201)}
+      console.log("here");
     } catch (error) {
-      res.status(500).json(error); // {success: false, statuscode: res.status(500)}
+      console.log(error);
+
+      const errorMessage = error.message || "error on server.";
+
+      res.status(500).json({
+        success: false,
+        statuscode: 500,
+        error: errorMessage,
+      }); // {success: false, statuscode: res.status(500)}
     }
   },
 
   loginUser: async (req, res) => {
     try {
       let user;
-      if (req.body.usertype == "candidate") {
-        user = await UserCandidate.findOne({ email: req.body.email });
-      } else {
+      user = await UserCandidate.findOne({ email: req.body.email });
+      if (!user) {
         user = await UserCompany.findOne({ email: req.body.email });
       }
-
       if (!user) {
-        return res.status(401).json("User not found");
+        console.log("user not found");
+        return res
+          .status(404)
+          .json({ success: false, statuscode: 404, data: {message: "User not found" }});
       }
 
       const decrpassword = CryptoJS.AES.decrypt(
@@ -79,9 +118,16 @@ module.exports = {
         { expiresIn: "21d" }
       );
 
-      res.status(200).json({...others, userToken});
+      res.status(200).json({
+        ...others,
+        data: { token: userToken },
+        success: true,
+        statuscode: 200,
+      });
     } catch (error) {
-      res.status(500).json(error);
+      res
+        .status(500)
+        .json({ success: false, statuscode: 500, message: error.message });
     }
   },
 };

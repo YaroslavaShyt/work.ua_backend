@@ -6,8 +6,8 @@ const UserCompanySchema = new mongoose.Schema({
   workersQuantity: { type: String, required: true, unique: false },
   serviceType: { type: String, required: true, unique: false },
   description: { type: String, required: true, unique: false },
-  contactNumber: { type: String, required: false, unique: true },
-  email: { type: String, required: true, unique: true },
+  contactNumber: { type: String, required: false, unique: false },
+  email: { type: String, required: true, unique: false },
   socialMediaLinks: { type: Array, required: false, unique: false },
   password: { type: String, required: true, unique: false },
   profilePhoto: {
