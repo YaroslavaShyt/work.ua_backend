@@ -5,6 +5,9 @@ const mongoose = require("mongoose");
 const authRoute = require("../work.ua_backend/routes/auth");
 const userRoute = require("../work.ua_backend/routes/user");
 const jobRoute = require("../work.ua_backend/routes/jobs");
+const cvRoute = require("../work.ua_backend/routes/cv");
+const chatRoute = require("../work.ua_backend/routes/chat");
+const messageRoute = require("../work.ua_backend/routes/message")
 
 dotenv.config();
 
@@ -19,6 +22,12 @@ app.use(express.json());
 app.use("/api/", authRoute);
 app.use("/api/users/", userRoute);
 app.use("/api/jobs/", jobRoute);
+app.use("/api/cvs/", cvRoute);
+app.use("/api/chats", chatRoute);
+app.use("/api/messages", messageRoute);
+
+
+
 
 const PORT = process.env.PORT || 5000;
 
