@@ -1,6 +1,6 @@
-const User = require("../models/UserCandidate");
-const Message = require("../models/Message");
-const Chat = require("../models/Chat");
+const User = require("../models/userCandidateModel");
+const Message = require("../models/messageModel");
+const Chat = require("../models/chatModel");
 module.exports = {
   getAllMessage: async (req, res) => {
     try {
@@ -8,14 +8,14 @@ module.exports = {
       const page = req.query.page || 1;
       const skipMessages = (page - 1) * pageSize;
 
-      var messages = await Message.find({ chat: req.params.id })
+      var messages = await Message.find({ chat: req.body.chatId })
         .populate("sender", "username profile email")
         .populate("chat")
         .sort({ createdAt: -1 })
         .skip(skipMessages)
         .limit(pageSize);
       messages = await User.populate(messages, {
-        path: "chat.users",
+        path: "chat.user",
         select: "username profile email",
       });
       res.json(messages);
@@ -26,7 +26,7 @@ module.exports = {
 
   sendMessage: async (req, res) => {
     const { content, chatId, receiver } = req.body;
-    if (!content || chatId) {
+    if (!content || !chatId) {
       console.log("empty content or chatID");
       return res.status(400).json({ error: "empty content or chatID" });
     }

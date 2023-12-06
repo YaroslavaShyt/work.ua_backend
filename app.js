@@ -23,8 +23,8 @@ app.use("/api/", authRoute);
 app.use("/api/users/", userRoute);
 app.use("/api/jobs/", jobRoute);
 app.use("/api/cvs/", cvRoute);
-app.use("/api/chats", chatRoute);
-app.use("/api/messages", messageRoute);
+app.use("/api/chats/", chatRoute);
+app.use("/api/messages/", messageRoute);
 
 
 

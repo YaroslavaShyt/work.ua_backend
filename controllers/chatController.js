@@ -1,17 +1,18 @@
-const Chat = require("../models/Chat");
-const UserCandidate = require("../models/UserCandidate");
+const Chat = require("../models/chatModel");
+const UserCandidate = require("../models/userCandidateModel");
 
 module.exports = {
   accessChat: async (req, res) => {
-    const { userId } = req.body;
+    const userId = req.body.user;
+    console.log(userId);
     if (!userId) {
       res.status(400).json("invalid user id");
     }
-    var isChat = await Chat.fint({
+    var isChat = await Chat.find({
       isGroupChat: false,
       $and: [
-        { users: { $elemMatch: { $eq: req.user.id } } },
-        { users: { $elemMatch: { $eq: userId } } },
+        { user: { $elemMatch: { $eq: req.user.id } } },
+        { user: { $elemMatch: { $eq: userId } } },
       ],
     })
       .populate("users", "-password")
@@ -27,12 +28,12 @@ module.exports = {
       var chatData = {
         chatName: req.user.id,
         isGroupChat: false,
-        users: [req.user.id, userId],
+        user: [req.user.id, userId],
       };
       try {
         const createdChat = await Chat.create(chatData);
         const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
-          "users",
+          "user",
           "-password"
         );
 
@@ -45,8 +46,8 @@ module.exports = {
 
   getChat: async (req, res) => {
     try {
-      Chat.find({ users: { $elemMatch: { $eq: req.user.id } } })
-        .populate("users", "-password")
+      Chat.find({ user: { $elemMatch: { $eq: req.user.id } } })
+        .populate("user", "-password")
         .populate("groupAdmin", "-password")
         .populate("latestMessage")
         .sort({ updatedAt: -1 })

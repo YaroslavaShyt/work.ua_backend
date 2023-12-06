@@ -1,4 +1,4 @@
-const UserCandidate = require("../models/userCadidateModel");
+const UserCandidate = require("../models/userCandidateModel");
 const UserCompany = require("../models/userCompanyModel");
 const Token = require("../models/tokenModel");
 const CryptoJS = require("crypto-js");
@@ -94,7 +94,11 @@ module.exports = {
         console.log("user not found");
         return res
           .status(404)
-          .json({ success: false, statuscode: 404, data: {message: "User not found" }});
+          .json({
+            success: false,
+            statuscode: 404,
+            data: { message: "User not found" },
+          });
       }
 
       const decrpassword = CryptoJS.AES.decrypt(

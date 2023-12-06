@@ -1,4 +1,4 @@
-const UserCandidate = require("../models/userCadidateModel");
+const UserCandidate = require("../models/userCandidateModel");
 const CryptoJS = require("crypto-js");
 
 module.exports = {

@@ -1,4 +1,4 @@
-const UserCandidate = require("../models/userCadidateModel");
+const UserCandidate = require("../models/userCandidateModel");
 const UserCompany = require("../models/userCompanyModel");
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
@@ -28,7 +28,7 @@ const verifyAndAuthorization = (req, res, next) => {
     if (req.user.id === req.params.id) {
       next();
     } else {
-      res.status(403).json({});
+      res.status(403).json({message: "verify and authorization method causes an error"});
     }
   });
 };
