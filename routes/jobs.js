@@ -5,14 +5,14 @@ const {
   verifyAndAuthorization,
 } = require("../middleware/verifyToken");
 
-router.post("/", jobController.createJob);
+router.post("/", verifyToken, jobController.createJob);
 
-router.put("/:id", jobController.updateJob);
+router.put("/:id", verifyToken, jobController.updateJob);
 
-router.delete("/:id", jobController.deleteJob);
+router.delete("/:id", verifyToken, jobController.deleteJob);
 
-router.get("/:id", jobController.getJob);
+router.get("/:id", verifyToken, jobController.getJob);
 
-router.get("/all/", jobController.getAllJobs);
+router.get("/all/", verifyToken, jobController.getAllJobs);
 
 module.exports = router;

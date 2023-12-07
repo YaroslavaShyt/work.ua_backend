@@ -1,5 +1,5 @@
 const Chat = require("../models/chatModel");
-const UserCandidate = require("../models/userCandidateModel");
+const User = require("../models/userModel");
 
 module.exports = {
   accessChat: async (req, res) => {
@@ -18,7 +18,7 @@ module.exports = {
       .populate("users", "-password")
       .populate("latestMessage");
 
-    isChat = await UserCandidate.populate(isChat, {
+    isChat = await User.populate(isChat, {
       path: "latestMessage.sender",
       select: "username profile email",
     });
@@ -52,7 +52,7 @@ module.exports = {
         .populate("latestMessage")
         .sort({ updatedAt: -1 })
         .then(async (results) => {
-          results = await UserCandidate.populate(results, {
+          results = await User.populate(results, {
             path: "latestMessage.sender",
             select: "username profile email",
           });

@@ -1,5 +1,5 @@
-const UserCandidate = require("../models/userCandidateModel");
-const UserCompany = require("../models/userCompanyModel");
+const User = require("../models/userModel");
+
 const Token = require("../models/tokenModel");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 module.exports = {
   createUser: async (req, res) => {
     req.body.usertype == "candidate"
-      ? (newUser = new UserCandidate({
+      ? (newUser = new User({
           name: req.body.name,
           surname: req.body.surname,
           patronymic: req.body.patronymic,
@@ -21,12 +21,9 @@ module.exports = {
             req.body.password,
             process.env.SECRET_WORD
           ).toString(),
-          // remove is admin
-          isAdmin: req.body.isAdmin,
-          // remove here, add in update
           profilePhoto: req.body.profilePhoto,
         }))
-      : (newUser = new UserCompany({
+      : (newUser = new User({
           name: req.body.name,
           title: req.body.title,
           workersQuantity: req.body.workersQuantity,
@@ -61,15 +58,15 @@ module.exports = {
         value: userToken,
       }).save();
 
-      console.log(`token ${tokenValue}`);
+      //console.log(`token ${tokenValue}`);
       const responseData = {
         success: true,
         statuscode: 201,
         data: { token: tokenValue.value },
       };
-      console.log("here1");
+      //console.log("here1");
       res.status(201).json(responseData); // {success: true, statuscode: res.status(201)}
-      console.log("here");
+      //console.log("here");
     } catch (error) {
       console.log(error);
 
@@ -86,12 +83,9 @@ module.exports = {
   loginUser: async (req, res) => {
     try {
       let user;
-      user = await UserCandidate.findOne({ email: req.body.email });
+      user = await User.findOne({ email: req.body.email });
       if (!user) {
-        user = await UserCompany.findOne({ email: req.body.email });
-      }
-      if (!user) {
-        console.log("user not found");
+        //console.log("user not found");
         return res
           .status(404)
           .json({
@@ -116,7 +110,6 @@ module.exports = {
       const userToken = jwt.sign(
         {
           id: user._id,
-          isCompany: user.isCompany,
         },
         process.env.JWT_SEC,
         { expiresIn: "21d" }

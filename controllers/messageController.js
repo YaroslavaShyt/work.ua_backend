@@ -1,6 +1,7 @@
-const User = require("../models/userCandidateModel");
+const User = require("../models/userModel");
 const Message = require("../models/messageModel");
 const Chat = require("../models/chatModel");
+
 module.exports = {
   getAllMessage: async (req, res) => {
     try {
