@@ -62,7 +62,7 @@ module.exports = {
       const responseData = {
         success: true,
         statuscode: 201,
-        data: { token: tokenValue.value },
+        data: { token: tokenValue.value, id: savedUser._id },
       };
       //console.log("here1");
       res.status(201).json(responseData); // {success: true, statuscode: res.status(201)}
@@ -86,13 +86,11 @@ module.exports = {
       user = await User.findOne({ email: req.body.email });
       if (!user) {
         //console.log("user not found");
-        return res
-          .status(404)
-          .json({
-            success: false,
-            statuscode: 404,
-            data: { message: "User not found" },
-          });
+        return res.status(404).json({
+          success: false,
+          statuscode: 404,
+          data: { message: "User not found" },
+        });
       }
 
       const decrpassword = CryptoJS.AES.decrypt(
