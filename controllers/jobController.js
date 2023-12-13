@@ -47,14 +47,30 @@ module.exports = {
       res.status(404).json({ success: false, error: error });
     }
   },
-// does not work
+  // does not work
   getAllJobs: async (req, res) => {
-    // try {
-    const jobs = await Job.find();
-    console.log(jobs);
-    res.status(200).json(jobs);
-    // } catch (error) {
-    //  res.status(404).json({ success: false, error: error });
-    // }
+    try {
+      const query = req.query.searchString; // Отримання параметра запиту
+      let jobs;
+      console.log(query);
+      if (query) {
+        // Якщо є користувацький запит, шукаємо вакансії за цим запитом
+        jobs = await Job.find({
+          $or: [
+            { title: { $regex: new RegExp(query, "i") } }, // Пошук по назві вакансії (ігнорує регістр)
+            { description: { $regex: new RegExp(query, "i") } }, // Пошук по опису вакансії (ігнорує регістр)
+            // Додавайте інші поля, які ви хочете враховувати в пошуку
+          ],
+        });
+      } else {
+        // Якщо користувацький запит не вказано, отримуємо всі вакансії
+        jobs = await Job.find();
+      }
+
+      console.log(jobs);
+      res.status(200).json(jobs);
+    } catch (error) {
+      res.status(404).json({ success: false, error: error });
+    }
   },
 };

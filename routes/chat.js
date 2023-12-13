@@ -5,8 +5,12 @@ const {
   verifyAndAuthorization,
 } = require("../middleware/verifyToken");
 
-router.post("/", verifyToken, chatController.accessChat);
+router.post("/", verifyToken, chatController.createChat);
 
-router.get("/", verifyToken, chatController.getChat);
+router.get("/:id", verifyToken, chatController.getChatsForUser);
+
+router.get("/:id", verifyToken, chatController.getSpecificChat);
+
+//router.get("/:id", verifyToken, chatController.getChatById);
 
 module.exports = router;

@@ -42,7 +42,7 @@ io.on("connection", (socket) => {
   console.log("User connected");
   socket.on("setup", (userId) => {
     socket.join(userId);
-    socket.brodcast().emit("online-user", userId);
+    socket.broadcast.emit("online-user", userId);
     console.log(userId);
   });
 

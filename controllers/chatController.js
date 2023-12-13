@@ -2,21 +2,23 @@ const Chat = require("../models/chatModel");
 const User = require("../models/userModel");
 
 module.exports = {
-  accessChat: async (req, res) => {
+  createChat: async (req, res) => {
     const userId = req.body.user;
     console.log(userId);
     if (!userId) {
       res.status(400).json("invalid user id");
     }
     var isChat = await Chat.find({
-      isGroupChat: false,
+      isGroupChat: req.body.isGroupChat,
       $and: [
         { user: { $elemMatch: { $eq: req.user.id } } },
         { user: { $elemMatch: { $eq: userId } } },
       ],
     })
-      .populate("users", "-password")
+      .populate("user", "-password")
       .populate("latestMessage");
+
+    console.log(isChat);
 
     isChat = await User.populate(isChat, {
       path: "latestMessage.sender",
@@ -26,8 +28,9 @@ module.exports = {
       res.send(isChat[0]);
     } else {
       var chatData = {
-        chatName: req.user.id,
-        isGroupChat: false,
+        position: req.body.position,
+        companyName: req.body.companyName,
+        isGroupChat: true,
         user: [req.user.id, userId],
       };
       try {
@@ -44,9 +47,9 @@ module.exports = {
     }
   },
 
-  getChat: async (req, res) => {
+  getChatsForUser: async (req, res) => {
     try {
-      Chat.find({ user: { $elemMatch: { $eq: req.user.id } } })
+      Chat.find({ user: req.user.id })
         .populate("user", "-password")
         .populate("groupAdmin", "-password")
         .populate("latestMessage")
@@ -60,6 +63,34 @@ module.exports = {
         });
     } catch (error) {
       res.status(500).json({ error: error });
+    }
+  },
+
+  getSpecificChat: async (req, res) => {
+    const chatId = req.params.id; // Припустимо, що chatId передається як частина URL
+    console.log(chatId);
+    try {
+      let specificChat;
+      specificChat = await Chat.findById(chatId)
+        .populate("user", "-password")
+        .populate("groupAdmin", "-password")
+        .populate("latestMessage")
+        .exec();
+
+      if (!specificChat) {
+        // Якщо чат не знайдено за заданим ідентифікатором
+        return res.status(404).json({ message: "Chat not found" });
+      }
+
+      // Популюю інші додаткові дані за необхідності
+      specificChat = await User.populate(specificChat, {
+        path: "latestMessage.sender",
+        select: "username profile email",
+      });
+
+      res.status(200).json(specificChat);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   },
 };

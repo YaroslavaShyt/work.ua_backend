@@ -13,6 +13,6 @@ router.delete("/:id", verifyToken, jobController.deleteJob);
 
 router.get("/:id", verifyToken, jobController.getJob);
 
-router.get("/all/", verifyToken, jobController.getAllJobs);
+router.get("/", verifyToken, jobController.getAllJobs);
 
 module.exports = router;

@@ -7,6 +7,6 @@ const {
 
 router.post("/", verifyToken, messageController.sendMessage);
 
-router.get("/:id", verifyAndAuthorization, messageController.getAllMessage);
+router.get("/", verifyToken, messageController.getAllMessage);
 
 module.exports = router;

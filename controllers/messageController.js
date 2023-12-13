@@ -6,7 +6,7 @@ module.exports = {
   getAllMessage: async (req, res) => {
     try {
       const pageSize = 12;
-      const page = req.query.page || 1;
+      const page = req.body.page || 1;
       const skipMessages = (page - 1) * pageSize;
 
       var messages = await Message.find({ chat: req.body.chatId })
