@@ -8,6 +8,7 @@ module.exports = {
   createUser: async (req, res) => {
     req.body.usertype == "candidate"
       ? (newUser = new User({
+          usertype: req.body.usertype,
           name: req.body.name,
           surname: req.body.surname,
           patronymic: req.body.patronymic,
@@ -24,6 +25,8 @@ module.exports = {
           profilePhoto: req.body.profilePhoto,
         }))
       : (newUser = new User({
+          usertype: req.body.usertype,
+          city: req.body.city,
           name: req.body.name,
           title: req.body.title,
           workersQuantity: req.body.workersQuantity,

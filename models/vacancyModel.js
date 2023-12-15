@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const VacancySchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   date: { type: String, required: true, unique: false },
   title: { type: String, required: true, unique: false },
   salary: { type: String, required: true, unique: false },

@@ -4,17 +4,19 @@ const User = require("../models/userModel");
 module.exports = {
   createChat: async (req, res) => {
     const userId = req.body.user;
-    console.log(userId);
+    console.log("заходить у запит");
+    // console.log(userId, req.user.id);
     if (!userId) {
       res.status(400).json("invalid user id");
     }
     var isChat = await Chat.find({
-      isGroupChat: req.body.isGroupChat,
       $and: [
+        ////////////////////////////////////////////////////УЇБАН
         { user: { $elemMatch: { $eq: req.user.id } } },
         { user: { $elemMatch: { $eq: userId } } },
       ],
     })
+
       .populate("user", "-password")
       .populate("latestMessage");
 
@@ -33,22 +35,23 @@ module.exports = {
         isGroupChat: true,
         user: [req.user.id, userId],
       };
-      try {
-        const createdChat = await Chat.create(chatData);
-        const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
-          "user",
-          "-password"
-        );
+      //   try {
+      const createdChat = await Chat.create(chatData);
+      const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
+        "user",
+        "-password"
+      );
 
-        res.status(200).json(FullChat);
-      } catch (error) {
-        res.status(500).json({ error: error });
-      }
+      res.status(200).json(FullChat);
+      //   } catch (error) {
+      //      res.status(500).json({ error: error });
+      //   }
     }
   },
 
   getChatsForUser: async (req, res) => {
     try {
+      // console.log(req.user.id);
       Chat.find({ user: req.user.id })
         .populate("user", "-password")
         .populate("groupAdmin", "-password")
@@ -59,10 +62,11 @@ module.exports = {
             path: "latestMessage.sender",
             select: "username profile email",
           });
+          console.log(results);
           res.status(200).send(results);
         });
     } catch (error) {
-      res.status(500).json({ error: error });
+      res.status(500).json({ error: error.message });
     }
   },
 

@@ -7,7 +7,7 @@ const {
 
 router.post("/", verifyToken, chatController.createChat);
 
-router.get("/:id", verifyToken, chatController.getChatsForUser);
+router.get("/", verifyToken, chatController.getChatsForUser);
 
 router.get("/:id", verifyToken, chatController.getSpecificChat);
 

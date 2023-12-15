@@ -40,34 +40,30 @@ module.exports = {
 
   getJob: async (req, res) => {
     try {
-      const job = await Job.findById(req.params.id);
+      const job = await Job.findById(req.params.id).populate("user");
       const { password, __v, createdAt, updatedAt, ...jobData } = job._doc;
       res.status(200).json(jobData);
     } catch (error) {
       res.status(404).json({ success: false, error: error });
     }
   },
-  // does not work
+
   getAllJobs: async (req, res) => {
     try {
-      const query = req.query.searchString; // Отримання параметра запиту
+      const query = req.query.searchString;
       let jobs;
-      console.log(query);
+
       if (query) {
-        // Якщо є користувацький запит, шукаємо вакансії за цим запитом
         jobs = await Job.find({
           $or: [
-            { title: { $regex: new RegExp(query, "i") } }, // Пошук по назві вакансії (ігнорує регістр)
-            { description: { $regex: new RegExp(query, "i") } }, // Пошук по опису вакансії (ігнорує регістр)
-            // Додавайте інші поля, які ви хочете враховувати в пошуку
+            { title: { $regex: new RegExp(query, "i") } },
+            { description: { $regex: new RegExp(query, "i") } },
           ],
-        });
+        }).populate("user"); // Use populate to retrieve user details
       } else {
-        // Якщо користувацький запит не вказано, отримуємо всі вакансії
-        jobs = await Job.find();
+        jobs = await Job.find().populate("user"); // Use populate to retrieve user details
       }
 
-      console.log(jobs);
       res.status(200).json(jobs);
     } catch (error) {
       res.status(404).json({ success: false, error: error });
