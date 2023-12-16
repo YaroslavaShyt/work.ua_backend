@@ -9,6 +9,8 @@ router.get("/getCV", cvController.getCV);
 
 router.get("/getAllCV", cvController.getAllCVs);
 
+router.get("/getAllCVQuery", cvController.getAllCVsQuery);
+
 router.delete("/deleteCV", cvController.deleteCV);
 
 module.exports = router;

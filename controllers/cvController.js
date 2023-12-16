@@ -109,10 +109,10 @@ module.exports = {
     }
   },
 
-  getAllCVs: async (req, res) => {
+  getAllCVsQuery: async (req, res) => {
     let cvs;
     try {
-      console.log("in fun");
+      //console.log("in fun");
       //console.log(req.body.data.conditions);
       if (req.body) {
         // console.log("here");
@@ -122,6 +122,48 @@ module.exports = {
         cvs = await CV.find();
       }
       console.log(cvs);
+      if (cvs) {
+        res.status(200).json({
+          success: true,
+          statuscode: 200,
+          data: cvs,
+        });
+      } else {
+        res.status(404).json({
+          success: false,
+          statuscode: 404,
+          data: { data: cvs, message: "Could not find CVs." },
+        });
+      }
+    } catch (error) {
+      res
+        .status(404)
+        .json({ success: false, statuscode: 404, error: error.message });
+    }
+  },
+
+  getAllCVs: async (req, res) => {
+    let cvs;
+    try {
+      let conditions = {};
+
+      // Отримання параметрів з рядка запиту
+      const query = req.query.query;
+
+      // Перевірка, чи передано користувацький запит
+      if (query) {
+        // Додайте умови пошуку для полів position, city, description
+        conditions = {
+          $or: [
+            { position: { $regex: new RegExp(query, "i") } },
+            { city: { $regex: new RegExp(query, "i") } },
+            { description: { $regex: new RegExp(query, "i") } },
+          ],
+        };
+      }
+
+      cvs = await CV.find(conditions);
+
       if (cvs) {
         res.status(200).json({
           success: true,
