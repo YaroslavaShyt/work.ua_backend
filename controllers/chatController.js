@@ -1,51 +1,68 @@
 const Chat = require("../models/chatModel");
 const User = require("../models/userModel");
+const io = require("../app");
+const { sendChatNotification } = require("../sockets/chatSockets"); // Assuming both files are in the same directory
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types; // Import ObjectId from mongoose
 
 module.exports = {
   createChat: async (req, res) => {
-    const userId = req.body.user;
+    const userId = req.body.user[1];
     console.log("заходить у запит");
-    // console.log(userId, req.user.id);
+    console.log(userId, req.user.id);
     if (!userId) {
       res.status(400).json("invalid user id");
     }
+
+    const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
+
+    if (!isValidObjectId(req.user.id) || !isValidObjectId(userId)) {
+      res.status(400).json("invalid ObjectId");
+      return;
+    }
+
     var isChat = await Chat.find({
       $and: [
-        ////////////////////////////////////////////////////УЇБАН
         { user: { $elemMatch: { $eq: req.user.id } } },
         { user: { $elemMatch: { $eq: userId } } },
       ],
     })
-
       .populate("user", "-password")
       .populate("latestMessage");
 
-    console.log(isChat);
+    //console.log(isChat);
 
     isChat = await User.populate(isChat, {
       path: "latestMessage.sender",
       select: "username profile email",
     });
+
     if (isChat.length > 0) {
       res.send(isChat[0]);
     } else {
+      const userIds = [
+        new mongoose.Types.ObjectId(req.user.id),
+        new mongoose.Types.ObjectId(userId),
+      ];
+
       var chatData = {
         position: req.body.position,
         companyName: req.body.companyName,
         isGroupChat: true,
-        user: [req.user.id, userId],
+        user: userIds,
       };
-      //   try {
-      const createdChat = await Chat.create(chatData);
-      const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
-        "user",
-        "-password"
-      );
 
-      res.status(200).json(FullChat);
-      //   } catch (error) {
-      //      res.status(500).json({ error: error });
-      //   }
+      try {
+        const createdChat = await Chat.create(chatData);
+        const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
+          "user",
+          "-password"
+        );
+        // sendChatNotification(io, FullChat, userId);
+        res.status(200).json(FullChat);
+      } catch (error) {
+        res.status(500).json({ error: error });
+      }
     }
   },
 
@@ -62,7 +79,7 @@ module.exports = {
             path: "latestMessage.sender",
             select: "username profile email",
           });
-          console.log(results);
+          // console.log(results);
           res.status(200).send(results);
         });
     } catch (error) {
@@ -72,7 +89,7 @@ module.exports = {
 
   getSpecificChat: async (req, res) => {
     const chatId = req.params.id; // Припустимо, що chatId передається як частина URL
-    console.log(chatId);
+    //console.log(chatId);
     try {
       let specificChat;
       specificChat = await Chat.findById(chatId)

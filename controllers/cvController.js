@@ -109,7 +109,7 @@ module.exports = {
     }
   },
 
-  getAllCVsQuery: async (req, res) => {
+  getAllCVs: async (req, res) => {
     let cvs;
     try {
       //console.log("in fun");
@@ -142,14 +142,14 @@ module.exports = {
     }
   },
 
-  getAllCVs: async (req, res) => {
+  getAllCVsQuery: async (req, res) => {
     let cvs;
     try {
       let conditions = {};
 
       // Отримання параметрів з рядка запиту
       const query = req.query.query;
-
+      console.log(query);
       // Перевірка, чи передано користувацький запит
       if (query) {
         // Додайте умови пошуку для полів position, city, description
@@ -163,6 +163,7 @@ module.exports = {
       }
 
       cvs = await CV.find(conditions);
+      console.log(cvs);
 
       if (cvs) {
         res.status(200).json({

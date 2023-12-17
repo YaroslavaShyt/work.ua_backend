@@ -64,24 +64,26 @@ io.on("connection", (socket) => {
   });
 
   socket.on("new message", (newMessageReceived) => {
+    console.log("send message event");
     var chat = newMessageReceived.chat;
+    console.log(newMessageReceived.content);
     var room = chat._id;
     var sender = newMessageReceived.sender;
-    if (!sender || !senderId._id) {
+    if (!sender) {
       console.log("sender not defined");
       return;
     }
-    var senderId = sender._id;
+    const senderId = sender;
 
-    console.log(senderId + "message sender");
-    const users = chat.users;
+    console.log(senderId + " message sender");
+    const users = chat.user;
 
-    if (!users) {
-      console.log("Users not defined");
-      return;
-    }
+   // if (!users) {
+     // console.log("Users not defined");
+     // return;
+    //}
 
-    socket.to(room).emit("message received", newMessageReceived);
+    socket.to(room).emit("message received", newMessageReceived.content);
     socket.to(room).emit("message sent", "New message");
   });
 
@@ -89,4 +91,12 @@ io.on("connection", (socket) => {
     console.log("user ofline");
     console.log(userId);
   });
+
+  socket.on("chat_created", (data) => {
+    console.log(data);
+    console.log("suka blieatb");
+    socket.to(data).emit("got your id beach");
+  });
 });
+
+module.exports = io;

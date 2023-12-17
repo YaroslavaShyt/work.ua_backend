@@ -8,17 +8,19 @@ module.exports = {
       const pageSize = 12;
       const page = req.body.page || 1;
       const skipMessages = (page - 1) * pageSize;
-
+      //console.log("chat id");
+      // console.log(req.body.chatId);
       var messages = await Message.find({ chat: req.body.chatId })
         .populate("sender", "username profile email")
         .populate("chat")
-        .sort({ createdAt: -1 })
-        .skip(skipMessages)
-        .limit(pageSize);
+        .sort({ createdAt: -1 });
+      //.skip(skipMessages)
+      //.limit(pageSize);
       messages = await User.populate(messages, {
         path: "chat.user",
         select: "username profile email",
       });
+      // console.log(messages);
       res.json(messages);
     } catch (error) {
       res.status(500).json({ error: error });
