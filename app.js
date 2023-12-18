@@ -48,20 +48,28 @@ io.on("connection", (socket) => {
 
   socket.on("typing", (room) => {
     console.log("typing");
-    console.log("room");
+    //console.log("room");
     socket.to(room).emit("typing", room);
   });
 
   socket.on("stop typing", (room) => {
     console.log("stop typing");
-    console.log("room");
+    //console.log("room");
     socket.to(room).emit("stop typing", room);
   });
 
   socket.on("join chat", (room) => {
     socket.join(room);
     console.log("user joined room");
+    socket.to(room).emit("joined chat", room);
   });
+
+  socket.on("leave chat", (room) => {
+    socket.join(room);
+    console.log("user left room");
+    socket.to(room).emit("left chat", room);
+  });
+
 
   socket.on("new message", (newMessageReceived) => {
     console.log("send message event");
@@ -75,7 +83,8 @@ io.on("connection", (socket) => {
       return;
     }
     const senderId = sender;
-
+    const receiver = newMessageReceived.receiver;
+    console.log(receiver + " receiver id");
     console.log(senderId + " message sender");
     const users = chat.user;
 
@@ -84,7 +93,9 @@ io.on("connection", (socket) => {
     // return;
     //}
     var content = newMessageReceived.content;
+
     socket.to(room).emit("message received", content);
+    socket.to(receiver).emit("message received", chat);
     socket.to(room).emit("message sent", "New message");
   });
 
