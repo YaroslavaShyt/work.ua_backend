@@ -43,39 +43,36 @@ io.on("connection", (socket) => {
   socket.on("setup", (userId) => {
     socket.join(userId);
     socket.broadcast.emit("online-user", userId);
-    console.log(userId);
+    //console.log(userId);
   });
 
   socket.on("typing", (room) => {
     console.log("typing");
-    //console.log("room");
     socket.to(room).emit("typing", room);
   });
 
   socket.on("stop typing", (room) => {
     console.log("stop typing");
-    //console.log("room");
     socket.to(room).emit("stop typing", room);
   });
 
   socket.on("join chat", (room) => {
     socket.join(room);
-    console.log("user joined room");
+    console.log("user joined room ", room);
     socket.to(room).emit("joined chat", room);
   });
 
   socket.on("leave chat", (room) => {
     socket.join(room);
-    console.log("user left room");
+    console.log("user left room ", room);
     socket.to(room).emit("left chat", room);
   });
 
-
   socket.on("new message", (newMessageReceived) => {
-    console.log("send message event");
+    //console.log("send message event");
     var chat = newMessageReceived.chat;
-    console.log(newMessageReceived.content);
-    console.log("chat id" + chat);
+    //console.log(newMessageReceived.content);
+    //console.log("chat id" + chat);
     var room = chat;
     var sender = newMessageReceived.sender;
     if (!sender) {
@@ -84,8 +81,8 @@ io.on("connection", (socket) => {
     }
     const senderId = sender;
     const receiver = newMessageReceived.receiver;
-    console.log(receiver + " receiver id");
-    console.log(senderId + " message sender");
+    //console.log(receiver + " receiver id");
+    //console.log(senderId + " message sender");
     const users = chat.user;
 
     // if (!users) {
@@ -100,15 +97,13 @@ io.on("connection", (socket) => {
   });
 
   socket.off("setup", () => {
-    console.log("user ofline");
-    console.log(userId);
+    console.log("user ofline", userId);
   });
 
-  socket.on("chat_created", (data) => {
-    console.log(data);
-    console.log("suka blieatb");
-    socket.to(data).emit("got your id beach");
-  });
+  // socket.on("chat_created", (data) => {
+  //   console.log(data);
+  //   socket.to(data).emit("chat created");
+  // });
 });
 
 module.exports = io;
