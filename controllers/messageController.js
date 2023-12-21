@@ -39,7 +39,7 @@ module.exports = {
       receiver: receiver,
       chat: chatId,
     };
-    try {
+    //try {
       var message = await Message.create(newMessage);
       message = await message.populate("sender", "username profile email");
       message = await message.populate("chat");
@@ -49,9 +49,10 @@ module.exports = {
       });
 
       await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
+      //console.log('message added')
       res.json(message);
-    } catch (error) {
-      res.status(400).json({ error: error });
-    }
+    //} catch (error) {
+    //  res.status(400).json({ error: error });
+    //}
   },
 };

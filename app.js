@@ -47,24 +47,24 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", (room) => {
-    console.log("typing");
+    //console.log("typing");
     socket.to(room).emit("typing", room);
   });
 
   socket.on("stop typing", (room) => {
-    console.log("stop typing");
+    //console.log("stop typing");
     socket.to(room).emit("stop typing", room);
   });
 
   socket.on("join chat", (room) => {
     socket.join(room);
-    console.log("user joined room ", room);
+    //console.log("user joined room ", room);
     socket.to(room).emit("joined chat", room);
   });
 
   socket.on("leave chat", (room) => {
     socket.join(room);
-    console.log("user left room ", room);
+    //console.log("user left room ", room);
     socket.to(room).emit("left chat", room);
   });
 
@@ -81,8 +81,8 @@ io.on("connection", (socket) => {
     }
     const senderId = sender;
     const receiver = newMessageReceived.receiver;
-    //console.log(receiver + " receiver id");
-    //console.log(senderId + " message sender");
+    console.log(receiver + " receiver id");
+    console.log(senderId + " message sender");
     const users = chat.user;
 
     // if (!users) {
@@ -90,9 +90,10 @@ io.on("connection", (socket) => {
     // return;
     //}
     var content = newMessageReceived.content;
-
+    console.log("content", content);
+    console.log(chat, receiver);
     socket.to(room).emit("message received", content);
-    socket.to(receiver).emit("message received", chat);
+    socket.to(receiver).emit("message received over chat", chat);
     socket.to(room).emit("message sent", "New message");
   });
 

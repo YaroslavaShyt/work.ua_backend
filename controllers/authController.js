@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 
 module.exports = {
   createUser: async (req, res) => {
+    // якщо користувач є кандидатом - не передаємо дані,
+    // які потрібні для профілю компанії
     req.body.usertype == "candidate"
       ? (newUser = new User({
           usertype: req.body.usertype,
@@ -16,7 +18,6 @@ module.exports = {
           city: req.body.city,
           contactNumber: req.body.contactNumber,
           email: req.body.email,
-          // remove links
           socialMediaLinks: req.body.socialMediaLinks,
           password: CryptoJS.AES.encrypt(
             req.body.password,
